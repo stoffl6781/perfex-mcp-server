@@ -31,26 +31,40 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label><?= _l('mcp_token_permissions'); ?> – <?= _l('mcp_perm_read'); ?>/<?= _l('mcp_perm_write'); ?></label>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="groups[]" value="clients" checked> <?= _l('mcp_perm_clients'); ?></label>
+                                <label><?= _l('mcp_token_permissions'); ?></label>
+                                <p class="text-muted tw-mb-2"><?= _l('mcp_perm_read'); ?> / <?= _l('mcp_perm_write'); ?></p>
+
+                                <?php
+                                $groups = [
+                                    'clients'   => _l('mcp_perm_clients'),
+                                    'invoices'  => _l('mcp_perm_invoices'),
+                                    'estimates' => _l('mcp_perm_estimates'),
+                                    'mainwp'    => _l('mcp_perm_mainwp'),
+                                ];
+                                foreach ($groups as $key => $label): ?>
+                                <div class="onoffswitch mbot10">
+                                    <input type="checkbox" name="groups[]" value="<?= $key; ?>"
+                                        id="group_<?= $key; ?>" class="onoffswitch-checkbox" checked>
+                                    <label class="onoffswitch-label" for="group_<?= $key; ?>"></label>
+                                    <span class="tw-ml-2"><?= $label; ?></span>
                                 </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="groups[]" value="invoices" checked> <?= _l('mcp_perm_invoices'); ?></label>
-                                </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="groups[]" value="estimates" checked> <?= _l('mcp_perm_estimates'); ?></label>
-                                </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="groups[]" value="mainwp" checked> <?= _l('mcp_perm_mainwp'); ?></label>
-                                </div>
+                                <?php endforeach; ?>
+
                                 <hr>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="access[]" value="read" checked> <?= _l('mcp_perm_read'); ?></label>
+
+                                <?php
+                                $access = [
+                                    'read'  => _l('mcp_perm_read'),
+                                    'write' => _l('mcp_perm_write'),
+                                ];
+                                foreach ($access as $key => $label): ?>
+                                <div class="onoffswitch mbot10">
+                                    <input type="checkbox" name="access[]" value="<?= $key; ?>"
+                                        id="access_<?= $key; ?>" class="onoffswitch-checkbox" checked>
+                                    <label class="onoffswitch-label" for="access_<?= $key; ?>"></label>
+                                    <span class="tw-ml-2"><?= $label; ?></span>
                                 </div>
-                                <div class="checkbox">
-                                    <label><input type="checkbox" name="access[]" value="write" checked> <?= _l('mcp_perm_write'); ?></label>
-                                </div>
+                                <?php endforeach; ?>
                             </div>
                             <div class="form-group">
                                 <label for="expires_at"><?= _l('mcp_token_expires'); ?></label>
