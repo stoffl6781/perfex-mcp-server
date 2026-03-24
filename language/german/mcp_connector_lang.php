@@ -1,0 +1,32 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+$lang['mcp_connector']              = 'MCP Connector';
+$lang['mcp_connector_description']  = 'Model Context Protocol Server für Claude AI';
+$lang['mcp_tokens']                 = 'API-Tokens';
+$lang['mcp_audit_log']              = 'Audit-Log';
+$lang['mcp_settings']               = 'MCP-Einstellungen';
+$lang['mcp_token_label']            = 'Bezeichnung';
+$lang['mcp_token_staff']            = 'Mitarbeiter';
+$lang['mcp_token_permissions']      = 'Berechtigungen';
+$lang['mcp_token_created']          = 'Erstellt';
+$lang['mcp_token_last_used']        = 'Letzter Zugriff';
+$lang['mcp_token_status']           = 'Status';
+$lang['mcp_token_active']           = 'Aktiv';
+$lang['mcp_token_inactive']         = 'Inaktiv';
+$lang['mcp_token_create']           = 'Token erstellen';
+$lang['mcp_token_created_msg']      = 'Token erstellt. Jetzt kopieren — wird nicht erneut angezeigt:';
+$lang['mcp_token_revoke']           = 'Widerrufen';
+$lang['mcp_token_revoked']          = 'Token widerrufen.';
+$lang['mcp_token_expires']          = 'Läuft ab';
+$lang['mcp_token_never']            = 'Nie';
+$lang['mcp_perm_clients']           = 'Kunden';
+$lang['mcp_perm_invoices']          = 'Rechnungen';
+$lang['mcp_perm_estimates']         = 'Angebote';
+$lang['mcp_perm_mainwp']            = 'MainWP-Seiten';
+$lang['mcp_perm_read']              = 'Lesen';
+$lang['mcp_perm_write']             = 'Schreiben';
+$lang['mcp_audit_tool']             = 'Tool';
+$lang['mcp_audit_status']           = 'Status';
+$lang['mcp_audit_time']             = 'Zeitpunkt';
+$lang['mcp_audit_input']            = 'Eingabe';

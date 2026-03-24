@@ -1,0 +1,32 @@
+<?php
+defined('BASEPATH') or exit('No direct script access allowed');
+
+$lang['mcp_connector']              = 'MCP Connector';
+$lang['mcp_connector_description']  = 'Model Context Protocol Server for Claude AI';
+$lang['mcp_tokens']                 = 'API Tokens';
+$lang['mcp_audit_log']              = 'Audit Log';
+$lang['mcp_settings']               = 'MCP Settings';
+$lang['mcp_token_label']            = 'Label';
+$lang['mcp_token_staff']            = 'Staff Member';
+$lang['mcp_token_permissions']      = 'Permissions';
+$lang['mcp_token_created']          = 'Created';
+$lang['mcp_token_last_used']        = 'Last Used';
+$lang['mcp_token_status']           = 'Status';
+$lang['mcp_token_active']           = 'Active';
+$lang['mcp_token_inactive']         = 'Inactive';
+$lang['mcp_token_create']           = 'Create Token';
+$lang['mcp_token_created_msg']      = 'Token created. Copy it now — it will not be shown again:';
+$lang['mcp_token_revoke']           = 'Revoke';
+$lang['mcp_token_revoked']          = 'Token revoked.';
+$lang['mcp_token_expires']          = 'Expires';
+$lang['mcp_token_never']            = 'Never';
+$lang['mcp_perm_clients']           = 'Clients';
+$lang['mcp_perm_invoices']          = 'Invoices';
+$lang['mcp_perm_estimates']         = 'Estimates';
+$lang['mcp_perm_mainwp']            = 'MainWP Sites';
+$lang['mcp_perm_read']              = 'Read';
+$lang['mcp_perm_write']             = 'Write';
+$lang['mcp_audit_tool']             = 'Tool';
+$lang['mcp_audit_status']           = 'Status';
+$lang['mcp_audit_time']             = 'Time';
+$lang['mcp_audit_input']            = 'Input';

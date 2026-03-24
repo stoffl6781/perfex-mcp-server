@@ -1,0 +1,19 @@
+# Dependencies
+vendor/
+
+# Sessions (generated at runtime)
+storage/sessions/*
+!storage/sessions/.htaccess
+
+# Logs
+storage/*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
