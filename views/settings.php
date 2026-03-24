@@ -41,13 +41,9 @@
                                     'mainwp'    => _l('mcp_perm_mainwp'),
                                 ];
                                 foreach ($groups as $key => $label): ?>
-                                <div class="tw-flex tw-items-center tw-gap-3 mbot10">
-                                    <div class="onoffswitch">
-                                        <input type="checkbox" name="groups[]" value="<?= $key; ?>"
-                                            id="group_<?= $key; ?>" class="onoffswitch-checkbox" checked>
-                                        <label class="onoffswitch-label" for="group_<?= $key; ?>"></label>
-                                    </div>
-                                    <label for="group_<?= $key; ?>" class="tw-mb-0 tw-cursor-pointer"><?= $label; ?></label>
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" name="groups[]" value="<?= $key; ?>" id="group_<?= $key; ?>" checked>
+                                    <label for="group_<?= $key; ?>"><?= $label; ?></label>
                                 </div>
                                 <?php endforeach; ?>
 
@@ -60,13 +56,9 @@
                                     'write' => _l('mcp_perm_write'),
                                 ];
                                 foreach ($access as $key => $label): ?>
-                                <div class="tw-flex tw-items-center tw-gap-3 mbot10">
-                                    <div class="onoffswitch">
-                                        <input type="checkbox" name="access[]" value="<?= $key; ?>"
-                                            id="access_<?= $key; ?>" class="onoffswitch-checkbox" checked>
-                                        <label class="onoffswitch-label" for="access_<?= $key; ?>"></label>
-                                    </div>
-                                    <label for="access_<?= $key; ?>" class="tw-mb-0 tw-cursor-pointer"><?= $label; ?></label>
+                                <div class="checkbox checkbox-primary">
+                                    <input type="checkbox" name="access[]" value="<?= $key; ?>" id="access_<?= $key; ?>" checked>
+                                    <label for="access_<?= $key; ?>"><?= $label; ?></label>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
