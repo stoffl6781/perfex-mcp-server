@@ -32,7 +32,6 @@
                             </div>
                             <div class="form-group">
                                 <label><?= _l('mcp_token_permissions'); ?></label>
-                                <p class="text-muted tw-mb-2"><?= _l('mcp_perm_read'); ?> / <?= _l('mcp_perm_write'); ?></p>
 
                                 <?php
                                 $groups = [
@@ -42,15 +41,18 @@
                                     'mainwp'    => _l('mcp_perm_mainwp'),
                                 ];
                                 foreach ($groups as $key => $label): ?>
-                                <div class="onoffswitch mbot10">
-                                    <input type="checkbox" name="groups[]" value="<?= $key; ?>"
-                                        id="group_<?= $key; ?>" class="onoffswitch-checkbox" checked>
-                                    <label class="onoffswitch-label" for="group_<?= $key; ?>"></label>
-                                    <span class="tw-ml-2"><?= $label; ?></span>
+                                <div class="tw-flex tw-items-center tw-gap-3 mbot10">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="groups[]" value="<?= $key; ?>"
+                                            id="group_<?= $key; ?>" class="onoffswitch-checkbox" checked>
+                                        <label class="onoffswitch-label" for="group_<?= $key; ?>"></label>
+                                    </div>
+                                    <label for="group_<?= $key; ?>" class="tw-mb-0 tw-cursor-pointer"><?= $label; ?></label>
                                 </div>
                                 <?php endforeach; ?>
 
                                 <hr>
+                                <label><?= _l('mcp_perm_read'); ?> / <?= _l('mcp_perm_write'); ?></label>
 
                                 <?php
                                 $access = [
@@ -58,11 +60,13 @@
                                     'write' => _l('mcp_perm_write'),
                                 ];
                                 foreach ($access as $key => $label): ?>
-                                <div class="onoffswitch mbot10">
-                                    <input type="checkbox" name="access[]" value="<?= $key; ?>"
-                                        id="access_<?= $key; ?>" class="onoffswitch-checkbox" checked>
-                                    <label class="onoffswitch-label" for="access_<?= $key; ?>"></label>
-                                    <span class="tw-ml-2"><?= $label; ?></span>
+                                <div class="tw-flex tw-items-center tw-gap-3 mbot10">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="access[]" value="<?= $key; ?>"
+                                            id="access_<?= $key; ?>" class="onoffswitch-checkbox" checked>
+                                        <label class="onoffswitch-label" for="access_<?= $key; ?>"></label>
+                                    </div>
+                                    <label for="access_<?= $key; ?>" class="tw-mb-0 tw-cursor-pointer"><?= $label; ?></label>
                                 </div>
                                 <?php endforeach; ?>
                             </div>
