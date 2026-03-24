@@ -10,17 +10,20 @@ use Perfexcrm\McpConnector\McpAuth;
 
 class MainwpTools
 {
-    private \CI_Controller $ci;
+    private ?\CI_Controller $ci = null;
 
-    public function __construct()
+    private function ci(): \CI_Controller
     {
-        $this->ci = &get_instance();
+        if ($this->ci === null) {
+            $this->ci = &get_instance();
 
-        if (!module_exists('mainwp_connect')) {
-            throw new ToolCallException('MainWP Connect module is not installed or active.');
+            if (!module_exists('mainwp_connect')) {
+                throw new ToolCallException('MainWP Connect module is not installed or active. Install it from your Perfex CRM modules, or disable the mainwp tool group in your MCP token permissions.');
+            }
+
+            $this->ci->load->model('mainwp_connect/mainwp_model');
         }
-
-        $this->ci->load->model('mainwp_connect/mainwp_model');
+        return $this->ci;
     }
 
     /**
@@ -37,7 +40,7 @@ class MainwpTools
         McpAuth::authorizeAndLog('list_client_sites', $inputSummary);
 
         try {
-            $sites = $this->ci->mainwp_model->get_by_client($clientId);
+            $sites = $this->ci()->mainwp_model->get_by_client($clientId);
 
             if (!$sites) {
                 $result = ['sites' => [], 'message' => "No MainWP sites found for client {$clientId}."];
@@ -80,7 +83,7 @@ class MainwpTools
         McpAuth::authorizeAndLog('get_site_details', $inputSummary);
 
         try {
-            $site = $this->ci->mainwp_model->get_site($siteId);
+            $site = $this->ci()->mainwp_model->get_site($siteId);
 
             if (!$site) {
                 throw new ToolCallException("Site with ID {$siteId} not found.");
@@ -141,8 +144,8 @@ class MainwpTools
         McpAuth::authorizeAndLog('create_site', $inputSummary);
 
         try {
-            $this->ci->load->model('clients_model');
-            $client = $this->ci->clients_model->get($clientId);
+            $this->ci()->load->model('clients_model');
+            $client = $this->ci()->clients_model->get($clientId);
             if (!$client) {
                 throw new ToolCallException("Client with ID {$clientId} not found.");
             }
@@ -158,7 +161,7 @@ class MainwpTools
                 'client_id' => $clientId,
             ];
 
-            $siteResult = $this->ci->mainwp_model->add_site($data);
+            $siteResult = $this->ci()->mainwp_model->add_site($data);
 
             if (!$siteResult || empty($siteResult['success'])) {
                 $msg = $siteResult['message'] ?? 'Unknown error creating site.';
