@@ -11,12 +11,15 @@ use Perfexcrm\McpConnector\McpAuth;
 
 class EstimateTools
 {
-    private \CI_Controller $ci;
+    private ?\CI_Controller $ci = null;
 
-    public function __construct()
+    private function ci(): \CI_Controller
     {
-        $this->ci = &get_instance();
-        $this->ci->load->model('estimates_model');
+        if ($this->ci === null) {
+            $this->ci = &get_instance();
+            $this->ci->load->model('estimates_model');
+        }
+        return $this->ci;
     }
 
     /**
@@ -40,7 +43,7 @@ class EstimateTools
         McpAuth::authorizeAndLog('search_estimates', $inputSummary);
 
         try {
-            $db = $this->ci->db;
+            $db = $this->ci()->db;
             $table = db_prefix() . 'estimates';
 
             $statusMap = [
@@ -105,7 +108,7 @@ class EstimateTools
         McpAuth::authorizeAndLog('get_estimate', $inputSummary);
 
         try {
-            $estimate = $this->ci->estimates_model->get($estimateId);
+            $estimate = $this->ci()->estimates_model->get($estimateId);
 
             if (!$estimate) {
                 throw new ToolCallException("Estimate with ID {$estimateId} not found.");
@@ -171,8 +174,8 @@ class EstimateTools
         McpAuth::authorizeAndLog('create_estimate', $inputSummary);
 
         try {
-            $this->ci->load->model('clients_model');
-            $client = $this->ci->clients_model->get($clientId);
+            $this->ci()->load->model('clients_model');
+            $client = $this->ci()->clients_model->get($clientId);
             if (!$client) {
                 throw new ToolCallException("Client with ID {$clientId} not found.");
             }
@@ -230,13 +233,13 @@ class EstimateTools
                 'status'     => 1,
             ];
 
-            $estimateId = $this->ci->estimates_model->add($data);
+            $estimateId = $this->ci()->estimates_model->add($data);
 
             if (!$estimateId || !is_numeric($estimateId)) {
                 throw new ToolCallException('Failed to create estimate.');
             }
 
-            $estimate = $this->ci->estimates_model->get($estimateId);
+            $estimate = $this->ci()->estimates_model->get($estimateId);
 
             $result = [
                 'success'     => true,
@@ -253,6 +256,72 @@ class EstimateTools
         } catch (ToolCallException $e) {
             McpAuth::logToolResult('create_estimate', $inputSummary, 'error', $e->getMessage());
             throw $e;
+        }
+    }
+
+    /**
+     * Update an existing estimate's metadata (expiry date, notes, status).
+     *
+     * @param int $estimateId Estimate ID to update
+     * @param string|null $expirydate New expiry date (YYYY-MM-DD)
+     * @param string|null $notes Client-facing notes
+     * @param string|null $status New status: draft, sent, accepted, declined, expired
+     */
+    #[McpTool(name: 'update_estimate', annotations: new ToolAnnotations(destructiveHint: true))]
+    public function updateEstimate(
+        #[Schema(minimum: 1)]
+        int $estimateId,
+        ?string $expirydate = null,
+        ?string $notes = null,
+        ?string $status = null,
+    ): array {
+        $inputSummary = ['estimate_id' => $estimateId];
+        McpAuth::authorizeAndLog('update_estimate', $inputSummary);
+
+        try {
+            $estimate = $this->ci()->estimates_model->get($estimateId);
+            if (!$estimate) {
+                throw new ToolCallException("Estimate with ID {$estimateId} not found.");
+            }
+
+            $statusMap = [
+                'draft' => 1, 'sent' => 2, 'declined' => 3,
+                'accepted' => 4, 'expired' => 5,
+            ];
+
+            $data = [];
+            if ($expirydate !== null) $data['expirydate'] = $expirydate;
+            if ($notes !== null) $data['clientnote'] = $notes;
+            if ($status !== null) {
+                if (!isset($statusMap[$status])) {
+                    throw new ToolCallException("Invalid status '{$status}'. Use: draft, sent, accepted, declined, expired");
+                }
+                $data['status'] = $statusMap[$status];
+            }
+
+            if (empty($data)) {
+                throw new ToolCallException('No fields provided to update.');
+            }
+
+            $this->ci()->estimates_model->update($data, $estimateId);
+
+            $result = [
+                'success'     => true,
+                'estimate_id' => $estimateId,
+                'number'      => $estimate->prefix . $estimate->number,
+                'updated_fields' => array_keys($data),
+                'message'     => "Estimate {$estimate->prefix}{$estimate->number} updated. Fields: " . implode(', ', array_keys($data)),
+            ];
+
+            McpAuth::logToolResult('update_estimate', $inputSummary);
+            return $result;
+        } catch (ToolCallException $e) {
+            McpAuth::logToolResult('update_estimate', $inputSummary, 'error', $e->getMessage());
+            throw $e;
+        } catch (\Throwable $e) {
+            $msg = get_class($e) . ': ' . $e->getMessage();
+            McpAuth::logToolResult('update_estimate', $inputSummary, 'error', $msg);
+            throw new ToolCallException('Internal error: ' . $msg);
         }
     }
 }

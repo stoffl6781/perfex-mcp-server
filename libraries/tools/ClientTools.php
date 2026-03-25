@@ -234,4 +234,75 @@ class ClientTools
             throw $e;
         }
     }
+
+    /**
+     * Update an existing client's information.
+     *
+     * @param int $clientId Client ID to update
+     * @param string|null $company Company name
+     * @param string|null $phonenumber Phone number
+     * @param string|null $address Street address
+     * @param string|null $city City
+     * @param string|null $zip ZIP / postal code
+     * @param int|null $country Country ID
+     * @param string|null $vat VAT number
+     * @param string|null $website Website URL
+     */
+    #[McpTool(name: 'update_client', annotations: new ToolAnnotations(destructiveHint: true))]
+    public function updateClient(
+        #[Schema(minimum: 1)]
+        int $clientId,
+        ?string $company = null,
+        ?string $phonenumber = null,
+        ?string $address = null,
+        ?string $city = null,
+        ?string $zip = null,
+        ?int $country = null,
+        ?string $vat = null,
+        ?string $website = null,
+    ): array {
+        $inputSummary = ['client_id' => $clientId];
+        McpAuth::authorizeAndLog('update_client', $inputSummary);
+
+        try {
+            $client = $this->ci()->clients_model->get($clientId);
+            if (!$client) {
+                throw new ToolCallException("Client with ID {$clientId} not found.");
+            }
+
+            $data = array_filter([
+                'company'     => $company,
+                'phonenumber' => $phonenumber,
+                'address'     => $address,
+                'city'        => $city,
+                'zip'         => $zip,
+                'country'     => $country,
+                'vat'         => $vat,
+                'website'     => $website,
+            ], fn($v) => $v !== null);
+
+            if (empty($data)) {
+                throw new ToolCallException('No fields provided to update.');
+            }
+
+            $updated = $this->ci()->clients_model->update($data, $clientId);
+
+            $result = [
+                'success'   => true,
+                'client_id' => $clientId,
+                'updated_fields' => array_keys($data),
+                'message'   => "Client '{$client->company}' (ID {$clientId}) updated. Fields: " . implode(', ', array_keys($data)),
+            ];
+
+            McpAuth::logToolResult('update_client', $inputSummary);
+            return $result;
+        } catch (ToolCallException $e) {
+            McpAuth::logToolResult('update_client', $inputSummary, 'error', $e->getMessage());
+            throw $e;
+        } catch (\Throwable $e) {
+            $msg = get_class($e) . ': ' . $e->getMessage();
+            McpAuth::logToolResult('update_client', $inputSummary, 'error', $msg);
+            throw new ToolCallException('Internal error: ' . $msg);
+        }
+    }
 }
