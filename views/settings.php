@@ -39,6 +39,8 @@
                                     'invoices'  => _l('mcp_perm_invoices'),
                                     'estimates' => _l('mcp_perm_estimates'),
                                     'mainwp'    => _l('mcp_perm_mainwp'),
+                                    'projects'  => _l('mcp_perm_projects'),
+                                    'leads'     => _l('mcp_perm_leads'),
                                 ];
                                 foreach ($groups as $key => $label): ?>
                                 <div class="checkbox checkbox-primary">

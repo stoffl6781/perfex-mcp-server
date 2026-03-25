@@ -426,4 +426,37 @@ class InvoiceTools
             throw new ToolCallException('Internal error: ' . $msg);
         }
     }
+
+    /**
+     * List all available payment modes (methods) in Perfex CRM. Use the returned ID when recording payments with mark_invoice_paid.
+     */
+    #[McpTool(name: 'list_payment_modes', annotations: new ToolAnnotations(readOnlyHint: true))]
+    public function listPaymentModes(): array
+    {
+        McpAuth::authorizeAndLog('list_payment_modes', []);
+
+        try {
+            $db = $this->ci()->db;
+            $modes = $db->select('id, name, active')
+                ->where('expenses_only !=', 1)
+                ->order_by('name', 'ASC')
+                ->get(db_prefix() . 'payment_modes')
+                ->result_array();
+
+            $result = [
+                'payment_modes' => array_map(fn($m) => [
+                    'id'     => (int) $m['id'],
+                    'name'   => $m['name'],
+                    'active' => (int) $m['active'],
+                ], $modes),
+            ];
+
+            McpAuth::logToolResult('list_payment_modes', []);
+            return $result;
+        } catch (\Throwable $e) {
+            $msg = get_class($e) . ': ' . $e->getMessage();
+            McpAuth::logToolResult('list_payment_modes', [], 'error', $msg);
+            throw new ToolCallException('Internal error: ' . $msg);
+        }
+    }
 }

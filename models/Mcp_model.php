@@ -130,7 +130,8 @@ class Mcp_model extends App_Model
             'get_invoice'       => ['invoices', 'read'],
             'create_invoice'    => ['invoices', 'write'],
             'update_invoice'    => ['invoices', 'write'],
-            'mark_invoice_paid' => ['invoices', 'write'],
+            'mark_invoice_paid'  => ['invoices', 'write'],
+            'list_payment_modes' => ['invoices', 'read'],
             'search_estimates'  => ['estimates', 'read'],
             'get_estimate'      => ['estimates', 'read'],
             'create_estimate'   => ['estimates', 'write'],
@@ -138,6 +139,16 @@ class Mcp_model extends App_Model
             'list_client_sites' => ['mainwp', 'read'],
             'get_site_details'  => ['mainwp', 'read'],
             'create_site'       => ['mainwp', 'write'],
+            'search_projects'    => ['projects', 'read'],
+            'get_project'        => ['projects', 'read'],
+            'create_project'     => ['projects', 'write'],
+            'search_tasks'       => ['projects', 'read'],
+            'create_task'        => ['projects', 'write'],
+            'log_time'           => ['projects', 'write'],
+            'search_leads'       => ['leads', 'read'],
+            'get_lead'           => ['leads', 'read'],
+            'create_lead'        => ['leads', 'write'],
+            'list_lead_statuses' => ['leads', 'read'],
         ];
 
         if (!isset($toolGroups[$toolName])) {
