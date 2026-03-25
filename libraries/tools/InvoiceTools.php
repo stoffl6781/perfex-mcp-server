@@ -459,4 +459,51 @@ class InvoiceTools
             throw new ToolCallException('Internal error: ' . $msg);
         }
     }
+
+    /**
+     * Send an invoice to the client via email. Uses the Perfex email template and attaches the PDF.
+     *
+     * @param int $invoiceId Invoice ID to send
+     */
+    #[McpTool(name: 'send_invoice', annotations: new ToolAnnotations(destructiveHint: true))]
+    public function sendInvoice(
+        #[Schema(minimum: 1)]
+        int $invoiceId,
+    ): array {
+        $inputSummary = ['invoice_id' => $invoiceId];
+        McpAuth::authorizeAndLog('send_invoice', $inputSummary);
+
+        try {
+            $invoice = $this->ci()->invoices_model->get($invoiceId);
+            if (!$invoice) {
+                throw new ToolCallException("Invoice with ID {$invoiceId} not found.");
+            }
+
+            $success = $this->ci()->invoices_model->send_invoice_to_client($invoiceId, '', true, '', false);
+
+            if (!$success) {
+                throw new ToolCallException("Failed to send invoice. Check that the client has contacts with email addresses and that email is configured in Perfex.");
+            }
+
+            // Mark as sent
+            $this->ci()->invoices_model->set_invoice_sent($invoiceId, false, is_array($success) ? $success : []);
+
+            $result = [
+                'success'    => true,
+                'invoice_id' => $invoiceId,
+                'number'     => $invoice->prefix . $invoice->number,
+                'message'    => "Invoice {$invoice->prefix}{$invoice->number} sent to client '{$invoice->client->company}'.",
+            ];
+
+            McpAuth::logToolResult('send_invoice', $inputSummary);
+            return $result;
+        } catch (ToolCallException $e) {
+            McpAuth::logToolResult('send_invoice', $inputSummary, 'error', $e->getMessage());
+            throw $e;
+        } catch (\Throwable $e) {
+            $msg = get_class($e) . ': ' . $e->getMessage();
+            McpAuth::logToolResult('send_invoice', $inputSummary, 'error', $msg);
+            throw new ToolCallException('Internal error: ' . $msg);
+        }
+    }
 }

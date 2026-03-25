@@ -324,4 +324,56 @@ class EstimateTools
             throw new ToolCallException('Internal error: ' . $msg);
         }
     }
+
+    /**
+     * Convert an estimate to an invoice. Copies all items, billing info, and amounts. The estimate is marked as accepted.
+     *
+     * @param int $estimateId Estimate ID to convert
+     * @param bool $asDraft Create invoice as draft (default true)
+     */
+    #[McpTool(name: 'convert_estimate_to_invoice', annotations: new ToolAnnotations(destructiveHint: true))]
+    public function convertEstimateToInvoice(
+        #[Schema(minimum: 1)]
+        int $estimateId,
+        bool $asDraft = true,
+    ): array {
+        $inputSummary = ['estimate_id' => $estimateId];
+        McpAuth::authorizeAndLog('convert_estimate_to_invoice', $inputSummary);
+
+        try {
+            $estimate = $this->ci()->estimates_model->get($estimateId);
+            if (!$estimate) {
+                throw new ToolCallException("Estimate with ID {$estimateId} not found.");
+            }
+
+            $invoiceId = $this->ci()->estimates_model->convert_to_invoice($estimateId, false, $asDraft);
+
+            if (!$invoiceId) {
+                throw new ToolCallException('Failed to convert estimate to invoice.');
+            }
+
+            $this->ci()->load->model('invoices_model');
+            $invoice = $this->ci()->invoices_model->get($invoiceId);
+
+            $result = [
+                'success'     => true,
+                'invoice_id'  => (int) $invoiceId,
+                'invoice_number' => $invoice->prefix . $invoice->number,
+                'estimate_id' => $estimateId,
+                'total'       => (float) $invoice->total,
+                'status'      => $asDraft ? 'draft' : 'unpaid',
+                'message'     => "Estimate {$estimate->prefix}{$estimate->number} converted to invoice {$invoice->prefix}{$invoice->number}.",
+            ];
+
+            McpAuth::logToolResult('convert_estimate_to_invoice', $inputSummary);
+            return $result;
+        } catch (ToolCallException $e) {
+            McpAuth::logToolResult('convert_estimate_to_invoice', $inputSummary, 'error', $e->getMessage());
+            throw $e;
+        } catch (\Throwable $e) {
+            $msg = get_class($e) . ': ' . $e->getMessage();
+            McpAuth::logToolResult('convert_estimate_to_invoice', $inputSummary, 'error', $msg);
+            throw new ToolCallException('Internal error: ' . $msg);
+        }
+    }
 }
