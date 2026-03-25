@@ -51,11 +51,16 @@ class McpAuth implements MiddlewareInterface
         // MCP clients send Origin headers as part of the OAuth 2.1 flow. CSRF
         // protection is handled by PKCE code_challenge verification instead.
 
+        // Build resource_metadata URL for WWW-Authenticate header (RFC 9728)
+        $baseUrl = rtrim(defined('APP_BASE_URL') ? APP_BASE_URL : site_url(), '/');
+        $resourceMetadataUrl = $baseUrl . '/.well-known/oauth-protected-resource';
+        $wwwAuth = 'Bearer resource_metadata="' . $resourceMetadataUrl . '"';
+
         // Extract Bearer token
         $authorization = $request->getHeaderLine('Authorization');
         if (!str_starts_with($authorization, 'Bearer ')) {
             return $factory->createResponse(401)
-                ->withHeader('WWW-Authenticate', 'Bearer')
+                ->withHeader('WWW-Authenticate', $wwwAuth)
                 ->withHeader('Content-Type', 'application/json');
         }
 
@@ -65,6 +70,7 @@ class McpAuth implements MiddlewareInterface
         $token = $this->model->validate_token($plainToken);
         if ($token === null) {
             return $factory->createResponse(401)
+                ->withHeader('WWW-Authenticate', $wwwAuth)
                 ->withHeader('Content-Type', 'application/json');
         }
 
