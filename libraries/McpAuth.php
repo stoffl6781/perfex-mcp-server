@@ -47,11 +47,9 @@ class McpAuth implements MiddlewareInterface
             }
         }
 
-        // Reject browser Origin headers (prevent CSRF)
-        if ($request->hasHeader('Origin')) {
-            return $factory->createResponse(403)
-                ->withHeader('Content-Type', 'application/json');
-        }
+        // DECISION: Origin header check removed — Claude.ai and other browser-based
+        // MCP clients send Origin headers as part of the OAuth 2.1 flow. CSRF
+        // protection is handled by PKCE code_challenge verification instead.
 
         // Extract Bearer token
         $authorization = $request->getHeaderLine('Authorization');

@@ -6,6 +6,7 @@ namespace Perfexcrm\McpConnector\Tools;
 use Mcp\Capability\Attribute\McpTool;
 use Mcp\Capability\Attribute\Schema;
 use Mcp\Exception\ToolCallException;
+use Mcp\Schema\ToolAnnotations;
 use Perfexcrm\McpConnector\McpAuth;
 
 class InvoiceTools
@@ -28,7 +29,7 @@ class InvoiceTools
      * @param int $limit Maximum results
      * @param int $offset Skip first N results
      */
-    #[McpTool(name: 'search_invoices')]
+    #[McpTool(name: 'search_invoices', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function searchInvoices(
         ?int $clientId = null,
         ?string $status = null,
@@ -105,7 +106,7 @@ class InvoiceTools
      *
      * @param int $invoiceId The invoice ID
      */
-    #[McpTool(name: 'get_invoice')]
+    #[McpTool(name: 'get_invoice', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function getInvoice(
         #[Schema(minimum: 1)]
         int $invoiceId,
@@ -178,7 +179,7 @@ class InvoiceTools
      * @param string|null $notes Client-facing notes
      * @param bool $asDraft Save as draft (default true)
      */
-    #[McpTool(name: 'create_invoice')]
+    #[McpTool(name: 'create_invoice', annotations: new ToolAnnotations(destructiveHint: true))]
     public function createInvoice(
         #[Schema(minimum: 1)]
         int $clientId,

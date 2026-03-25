@@ -6,6 +6,7 @@ namespace Perfexcrm\McpConnector\Tools;
 use Mcp\Capability\Attribute\McpTool;
 use Mcp\Capability\Attribute\Schema;
 use Mcp\Exception\ToolCallException;
+use Mcp\Schema\ToolAnnotations;
 use Perfexcrm\McpConnector\McpAuth;
 
 class MainwpTools
@@ -31,7 +32,7 @@ class MainwpTools
      *
      * @param int $clientId The client ID
      */
-    #[McpTool(name: 'list_client_sites')]
+    #[McpTool(name: 'list_client_sites', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function listClientSites(
         #[Schema(minimum: 1)]
         int $clientId,
@@ -74,7 +75,7 @@ class MainwpTools
      *
      * @param int $siteId The MainWP site ID (from Perfex, not MainWP dashboard)
      */
-    #[McpTool(name: 'get_site_details')]
+    #[McpTool(name: 'get_site_details', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function getSiteDetails(
         #[Schema(minimum: 1)]
         int $siteId,
@@ -133,7 +134,7 @@ class MainwpTools
      * @param string $url Site URL (e.g. https://example.com)
      * @param string|null $name Display name (defaults to URL)
      */
-    #[McpTool(name: 'create_site')]
+    #[McpTool(name: 'create_site', annotations: new ToolAnnotations(destructiveHint: true))]
     public function createSite(
         #[Schema(minimum: 1)]
         int $clientId,

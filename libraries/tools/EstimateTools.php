@@ -6,6 +6,7 @@ namespace Perfexcrm\McpConnector\Tools;
 use Mcp\Capability\Attribute\McpTool;
 use Mcp\Capability\Attribute\Schema;
 use Mcp\Exception\ToolCallException;
+use Mcp\Schema\ToolAnnotations;
 use Perfexcrm\McpConnector\McpAuth;
 
 class EstimateTools
@@ -26,7 +27,7 @@ class EstimateTools
      * @param int $limit Maximum results
      * @param int $offset Skip first N results
      */
-    #[McpTool(name: 'search_estimates')]
+    #[McpTool(name: 'search_estimates', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function searchEstimates(
         ?int $clientId = null,
         ?string $status = null,
@@ -95,7 +96,7 @@ class EstimateTools
      *
      * @param int $estimateId The estimate ID
      */
-    #[McpTool(name: 'get_estimate')]
+    #[McpTool(name: 'get_estimate', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function getEstimate(
         #[Schema(minimum: 1)]
         int $estimateId,
@@ -157,7 +158,7 @@ class EstimateTools
      * @param int|null $currency Currency ID
      * @param string|null $notes Client-facing notes
      */
-    #[McpTool(name: 'create_estimate')]
+    #[McpTool(name: 'create_estimate', annotations: new ToolAnnotations(destructiveHint: true))]
     public function createEstimate(
         #[Schema(minimum: 1)]
         int $clientId,

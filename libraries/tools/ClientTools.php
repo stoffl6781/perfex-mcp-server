@@ -6,6 +6,7 @@ namespace Perfexcrm\McpConnector\Tools;
 use Mcp\Capability\Attribute\McpTool;
 use Mcp\Capability\Attribute\Schema;
 use Mcp\Exception\ToolCallException;
+use Mcp\Schema\ToolAnnotations;
 use Perfexcrm\McpConnector\McpAuth;
 
 class ClientTools
@@ -28,7 +29,7 @@ class ClientTools
      * @param int $limit Maximum results to return
      * @param int $offset Skip first N results for pagination
      */
-    #[McpTool(name: 'search_clients')]
+    #[McpTool(name: 'search_clients', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function searchClients(
         ?string $query = null,
         #[Schema(minimum: 1, maximum: 100)]
@@ -93,7 +94,7 @@ class ClientTools
      *
      * @param int $clientId The client ID to retrieve
      */
-    #[McpTool(name: 'get_client')]
+    #[McpTool(name: 'get_client', annotations: new ToolAnnotations(readOnlyHint: true))]
     public function getClient(
         #[Schema(minimum: 1)]
         int $clientId,
@@ -169,7 +170,7 @@ class ClientTools
      * @param int|null $country Country ID (see Perfex countries table)
      * @param string|null $vat VAT number (e.g. ATU12345678)
      */
-    #[McpTool(name: 'create_client')]
+    #[McpTool(name: 'create_client', annotations: new ToolAnnotations(destructiveHint: true))]
     public function createClient(
         string $company = '',
         ?string $firstname = null,

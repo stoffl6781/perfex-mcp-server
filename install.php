@@ -41,3 +41,38 @@ if (!$CI->db->table_exists(db_prefix() . 'mcp_audit_log')) {
         KEY `created_at` (`created_at`)
     ) ENGINE=InnoDB DEFAULT CHARSET=' . $CI->db->char_set . ';');
 }
+
+// OAuth 2.1 — Dynamic Client Registration (RFC 7591)
+if (!$CI->db->table_exists(db_prefix() . 'mcp_oauth_clients')) {
+    $CI->db->query('CREATE TABLE `' . db_prefix() . 'mcp_oauth_clients` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `client_id` varchar(64) NOT NULL,
+        `client_secret` varchar(255) NULL,
+        `client_name` varchar(200) NOT NULL DEFAULT \'\',
+        `redirect_uris` text NOT NULL,
+        `grant_types` varchar(200) NOT NULL DEFAULT \'authorization_code\',
+        `response_types` varchar(100) NOT NULL DEFAULT \'code\',
+        `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `idx_client_id` (`client_id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=' . $CI->db->char_set . ';');
+}
+
+// OAuth 2.1 — Authorization codes with PKCE (RFC 7636)
+if (!$CI->db->table_exists(db_prefix() . 'mcp_oauth_codes')) {
+    $CI->db->query('CREATE TABLE `' . db_prefix() . 'mcp_oauth_codes` (
+        `id` int(11) NOT NULL AUTO_INCREMENT,
+        `code` varchar(64) NOT NULL,
+        `client_id` varchar(64) NOT NULL,
+        `staff_id` int(11) NOT NULL,
+        `redirect_uri` varchar(500) NOT NULL,
+        `code_challenge` varchar(128) NULL,
+        `code_challenge_method` varchar(10) NULL DEFAULT \'S256\',
+        `scope` varchar(500) NULL,
+        `expires_at` datetime NOT NULL,
+        `used` tinyint(1) NOT NULL DEFAULT 0,
+        `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `idx_code` (`code`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=' . $CI->db->char_set . ';');
+}
