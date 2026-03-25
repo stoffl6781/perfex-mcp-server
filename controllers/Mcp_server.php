@@ -32,6 +32,12 @@ class Mcp_server extends CI_Controller
         }
 
         try {
+            // Explicitly load tool classes so MCP SDK discovery can reflect them
+            $toolsDir = dirname(__DIR__) . '/libraries/tools/';
+            foreach (glob($toolsDir . '*.php') as $toolFile) {
+                require_once $toolFile;
+            }
+
             // Build PSR-7 request from PHP globals
             $psr17 = new Psr17Factory();
             $creator = new \Nyholm\Psr7Server\ServerRequestCreator(

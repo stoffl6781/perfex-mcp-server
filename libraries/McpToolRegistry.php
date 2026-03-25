@@ -22,7 +22,7 @@ class McpToolRegistry
             public function __construct(private string $logFile) {}
             public function log($level, string|\Stringable $message, array $context = []): void
             {
-                if (!in_array($level, ['warning', 'error', 'critical', 'emergency'], true)) {
+                if (!in_array($level, ['info', 'warning', 'error', 'critical', 'emergency', 'debug'], true)) {
                     return;
                 }
                 $ctx = $context ? ' ' . json_encode($context, JSON_UNESCAPED_UNICODE | JSON_PARTIAL_OUTPUT_ON_ERROR) : '';
